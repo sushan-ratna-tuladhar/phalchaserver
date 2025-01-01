@@ -5,6 +5,9 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const auth = async (req, res, next) => {
   try {
+    if(!req.headers.authorization) {
+      throw new Error('You are not authorized!');
+    }
     const token = req.headers.authorization.split(' ')[1];
     const googleToken = token.length > 1000;
     if (googleToken) {
@@ -26,7 +29,7 @@ const auth = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(401).json({
       success: false,
       message: 'Something is wrong with your authorization!',
